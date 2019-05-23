@@ -1,0 +1,71 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+<meta charset="utf-8">
+<title>ToDoList</title>
+</head>
+<body> 
+
+<?php
+$id = $code = "";
+$iderr = $codeerr = "";
+    if ($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if (empty($_POST["id"])) {
+            $iderr = "Please input your id";
+          } else {
+            $id = test_input($_POST["id"]);
+            if (!preg_match("/^[0-9]*$/",$id)) {
+                $iderr = "只允许数字"; //记得做搜索，看ID是否重复//ID是否允许字母，长度是否限制
+                }
+          }
+          if (empty($_POST["code"])) {
+            $codeerr = "Please input your code";
+          } else {
+            if (!preg_match("/^[0-9]*$/",$id)) {
+                $iderr = "只允许数字"; //把密码搞复杂，不能只有数字
+                }
+            $code = test_input($_POST["code"]);
+          }
+    }
+
+    function test_input($data)
+    {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+    }
+    ?>
+
+<h2>Welcome to Todolist</h2>
+<p>Please fill out a form.</p>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
+   Your id: <input type="text" name="id">
+   <span class="error">* <?php echo $iderr;?></span>
+   <br><br>
+   Your code: <input type="text" name="code">
+   <span class="error">* <?php echo $codeerr;?></span>
+   <br><br>
+   <input type="submit" name="submit" value="Submit"> 
+</form>
+<?php
+echo "<h2>您输入的内容是:</h2>";
+echo $id;
+echo "<br/>";
+?>
+
+<?php
+global $id,$code;
+$dbh = new PDO("mysql:host=localhost:80;dbname=users",'root','');
+$sql = "INSERT INTO users_tbl ".
+        "(users_id,users_code) ".
+        "VALUES ".
+        "('$id','$code')";
+$dbh = null;
+//$pdo = new PDO("mysql:host=localhost:80;dbname=users",$username,$password);
+?>
+
+
+
+</body>
